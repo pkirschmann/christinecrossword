@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Celebrating Christine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+
+  <div id="toolbar">
+    <span id="timer-display">0:00</span>
+    <span id="puzzle-title">Loading…</span>
+    <div id="toolbar-controls">
+      <button id="btn-pencil" title="Pencil mode">✏️</button>
+
+      <div class="dropdown">
+        <button class="dropdown-toggle" id="btn-check">Check ▾</button>
+        <div class="dropdown-menu" id="menu-check">
+          <button data-action="check-letter">Check Letter</button>
+          <button data-action="check-word">Check Word</button>
+          <button data-action="check-puzzle">Check Puzzle</button>
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <button class="dropdown-toggle" id="btn-reveal">Reveal ▾</button>
+        <div class="dropdown-menu" id="menu-reveal">
+          <button data-action="reveal-letter">Reveal Letter</button>
+          <button data-action="reveal-word">Reveal Word</button>
+          <button data-action="reveal-puzzle">Reveal Puzzle</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="clue-bar">
+    <span id="clue-bar-number"></span>
+    <span id="clue-bar-text"></span>
+  </div>
+
+  <div id="main-content">
+    <div id="grid-container">
+      <div id="grid"></div>
+    </div>
+
+    <div id="clue-panel">
+      <div id="across-section">
+        <h3>Across</h3>
+        <ol id="across-list"></ol>
+      </div>
+      <div id="down-section">
+        <h3>Down</h3>
+        <ol id="down-list"></ol>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-overlay" class="hidden">
+    <div id="modal-box">
+      <h2>Puzzle Complete! 🎉</h2>
+      <p id="modal-time"></p>
+      <button id="modal-close">Close</button>
+    </div>
+  </div>
+
+  <div id="puzzle-date">Tuesday, March 17, 2026</div>
+
+  <input id="mobile-input" type="text" autocomplete="off" autocorrect="off"
+         autocapitalize="characters" spellcheck="false" aria-hidden="true">
+
+  <script src="./js/app.js"></script>
+</body>
+</html>

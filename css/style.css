@@ -1,0 +1,469 @@
+/* ── CSS custom properties ─────────────────────────────────────────── */
+:root {
+  --cell-size: 40px;
+  --color-selected: #FFD700;
+  --color-active-word: #A7D8FF;
+  --color-black-cell: #1A1A1A;
+  --color-incorrect: #FFB3B3;
+  --color-revealed: #F0E6FF;
+  --color-pencil-text: #6B6B6B;
+  --color-correct-dot: #2ECC71;
+  --toolbar-height: 48px;
+  --cluebar-height: 36px;
+  --font-main: 'Libre Franklin', 'Helvetica Neue', Arial, sans-serif;
+  --border-color: #333;
+  --bg-page: #f8f8f8;
+  --bg-toolbar: #fff;
+  --text-clue-active: #000;
+  --text-clue-inactive: #555;
+  --clue-active-bg: #e8f4ff;
+  --btn-bg: #f0f0f0;
+  --btn-hover: #e0e0e0;
+  --dropdown-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* ── Reset & base ───────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-main);
+  background: var(--bg-page);
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* ── Toolbar ────────────────────────────────────────────────────────── */
+#toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--toolbar-height);
+  padding: 0 12px;
+  background: var(--bg-toolbar);
+  border-bottom: 1px solid #ddd;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+#timer-display {
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  min-width: 48px;
+  color: #555;
+}
+
+#puzzle-title {
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  flex: 1;
+  padding: 0 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#toolbar-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+#btn-pencil {
+  background: var(--btn-bg);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  transition: background 0.15s;
+}
+#btn-pencil:hover { background: var(--btn-hover); }
+#btn-pencil.pencil-mode-active { background: var(--color-selected); border-color: #aaa; }
+
+/* ── Dropdowns ──────────────────────────────────────────────────────── */
+.dropdown { position: relative; }
+
+.dropdown-toggle {
+  background: var(--btn-bg);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: var(--font-main);
+  transition: background 0.15s;
+}
+.dropdown-toggle:hover { background: var(--btn-hover); }
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: var(--dropdown-shadow);
+  z-index: 100;
+  min-width: 140px;
+  overflow: hidden;
+}
+.dropdown-menu.open { display: block; }
+
+.dropdown-menu button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 8px 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: var(--font-main);
+  transition: background 0.1s;
+}
+.dropdown-menu button:hover { background: #f0f0f0; }
+
+/* ── Clue bar ───────────────────────────────────────────────────────── */
+#clue-bar {
+  display: flex;
+  align-items: center;
+  height: var(--cluebar-height);
+  padding: 0 12px;
+  background: #222;
+  color: #fff;
+  font-size: 13px;
+  flex-shrink: 0;
+  gap: 6px;
+  overflow: hidden;
+}
+
+#clue-bar-number {
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+#clue-bar-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Main layout ────────────────────────────────────────────────────── */
+#main-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+#grid-container {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 16px;
+  flex: 0 0 60%;
+  overflow: auto;
+}
+
+/* ── Grid ───────────────────────────────────────────────────────────── */
+#grid {
+  display: grid;
+  border: 2px solid var(--border-color);
+  user-select: none;
+}
+
+.cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  border: 1px solid #aaa;
+  position: relative;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cell-black {
+  background: var(--color-black-cell);
+  border-color: var(--color-black-cell);
+  pointer-events: none;
+  cursor: default;
+}
+
+.cell-selected { background: var(--color-selected) !important; }
+.cell-active-word { background: var(--color-active-word) !important; }
+.cell-incorrect { background: var(--color-incorrect) !important; }
+.cell-revealed { background: var(--color-revealed) !important; }
+
+/* red dot for incorrect */
+.cell-incorrect::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 5px;
+  height: 5px;
+  background: #e00;
+  border-radius: 50%;
+}
+
+/* green triangle for revealed */
+.cell-revealed::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-style: solid;
+  border-width: 0 10px 10px 0;
+  border-color: transparent #7c3aed transparent transparent;
+}
+
+.cell-number {
+  position: absolute;
+  top: 1px;
+  left: 2px;
+  font-size: 9px;
+  font-weight: 300;
+  line-height: 1;
+  color: #222;
+  pointer-events: none;
+}
+
+.cell-letter {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+  pointer-events: none;
+  color: #111;
+}
+
+.cell-pencil .cell-letter {
+  color: var(--color-pencil-text);
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* ── Clue panel ─────────────────────────────────────────────────────── */
+#clue-panel {
+  flex: 0 0 40%;
+  overflow-y: auto;
+  padding: 12px 16px;
+  border-left: 1px solid #ddd;
+  background: #fff;
+}
+
+#across-section, #down-section { margin-bottom: 24px; }
+
+#clue-panel h3 {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #888;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #eee;
+}
+
+#across-list, #down-list {
+  list-style: none;
+  padding: 0;
+}
+
+.clue-item {
+  display: flex;
+  gap: 6px;
+  padding: 5px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text-clue-inactive);
+  transition: background 0.1s;
+}
+.clue-item:hover { background: #f5f5f5; }
+.clue-item.clue-active {
+  background: var(--clue-active-bg);
+  color: var(--text-clue-active);
+  font-weight: 600;
+}
+
+.clue-num {
+  flex-shrink: 0;
+  font-weight: 600;
+  min-width: 24px;
+  text-align: right;
+  color: #444;
+}
+
+/* ── Completion modal ───────────────────────────────────────────────── */
+#modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+#modal-overlay.hidden { display: none; }
+
+#modal-box {
+  background: #fff;
+  border-radius: 12px;
+  padding: 32px 40px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  max-width: 320px;
+  width: 90%;
+}
+#modal-box h2 { font-size: 22px; margin-bottom: 10px; }
+#modal-box p { font-size: 16px; color: #555; margin-bottom: 20px; }
+#modal-close {
+  background: #222;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 24px;
+  font-size: 14px;
+  cursor: pointer;
+}
+#modal-close:hover { background: #444; }
+
+/* ── Puzzle date ────────────────────────────────────────────────────── */
+#puzzle-date {
+  width: 100%;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 300;
+  color: #999;
+  padding: 4px 0;
+  flex-shrink: 0;
+  background: var(--bg-page);
+}
+
+/* ── Mobile input (off-screen) ──────────────────────────────────────── */
+#mobile-input {
+  position: fixed;
+  top: -100px;
+  left: -100px;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  :root {
+    --cell-size: 28px;
+  }
+
+  body { overflow: auto; }
+
+  #main-content {
+    flex-direction: column;
+    overflow: visible;
+  }
+
+  #grid-container {
+    flex: none;
+    padding: 8px;
+    overflow: visible;
+  }
+
+  #clue-panel {
+    flex: none;
+    border-left: none;
+    border-top: 1px solid #ddd;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  .cell-letter { font-size: 14px; }
+  .cell-number { font-size: 7px; }
+
+  #puzzle-title { font-size: 13px; }
+  .dropdown-toggle { font-size: 12px; padding: 4px 7px; }
+}
+
+/* ── Birthday overlay ───────────────────────────────────────────────────────── */
+#birthday-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 300;
+  cursor: pointer;
+}
+
+.bday-scene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.confetti-wrap {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.confetto {
+  position: absolute;
+  top: -12px;
+  animation: confetti-fall linear infinite;
+}
+@keyframes confetti-fall {
+  0%   { transform: translateY(0) rotate(0deg);   opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+}
+
+.bday-msg {
+  font-size: clamp(22px, 5vw, 38px);
+  font-weight: 800;
+  color: #fff;
+  text-align: center;
+  animation: bday-pop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.bday-sub {
+  font-size: clamp(14px, 3vw, 20px);
+  color: #ffd700;
+  font-style: italic;
+  animation: bday-pop 0.5s 0.15s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes bday-pop {
+  from { transform: scale(0.4); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* ── Cake GIF ── */
+.bday-cake-gif {
+  width: min(280px, 70vw);
+  border-radius: 12px;
+  animation: bday-pop 0.6s 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+.bday-time {
+  font-size: 16px;
+  color: #b3e5fc;
+  margin-top: 4px;
+}
+.bday-hint {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  margin-top: 6px;
+}
